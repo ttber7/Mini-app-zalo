@@ -1,0 +1,292 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Zalo Mini App SDUI Schema - GovTech Platform",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "example": "1.0.0"
+    },
+    "cache_version": {
+      "type": "string",
+      "description": "Dùng để báo cho Mini App biết khi nào cần xoá cache cũ"
+    },
+    "tracking_id": {
+      "type": "string",
+      "description": "ID cho hệ thống Analytics"
+    },
+    "tenant_id": {
+      "type": "string",
+      "description": "ID của Phường/Xã cụ thể (vd: phuong_hung_dao)"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "global_config": {
+      "type": "object",
+      "properties": {
+        "primary_color": {
+          "type": "string"
+        },
+        "logo_url": {
+          "type": "string"
+        },
+        "app_name": {
+          "type": "string"
+        }
+      }
+    },
+    "entry_page": {
+      "type": "string",
+      "default": "home",
+      "description": "ID của trang sẽ được load đầu tiên khi mở App"
+    },
+    "data_sources": {
+      "type": "object",
+      "description": "Bản đồ toàn cục định nghĩa các API (Data Source Map)",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "api": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE"
+            ],
+            "default": "GET"
+          },
+          "cache": {
+            "type": "number",
+            "description": "Thời gian cache tính bằng giây"
+          }
+        },
+        "required": [
+          "api"
+        ]
+      }
+    },
+    "pages": {
+      "type": "object",
+      "description": "Danh sách toàn bộ các trang trong App (Page Registry)",
+      "additionalProperties": {
+        "$ref": "#/definitions/page"
+      }
+    }
+  },
+  "required": [
+    "version",
+    "tenant_id",
+    "data_sources",
+    "pages"
+  ],
+  "definitions": {
+    "page": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "visible_for": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "citizen",
+              "officer",
+              "admin"
+            ]
+          },
+          "default": [
+            "citizen"
+          ]
+        },
+        "layout": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/component"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "layout"
+      ]
+    },
+    "component": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "banner",
+            "grid_menu",
+            "article_list",
+            "form",
+            "text_block",
+            "webview",
+            "pdf_viewer",
+            "stat_card",
+            "video_list"
+          ]
+        },
+        "visible_for": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "citizen",
+              "officer",
+              "admin"
+            ]
+          },
+          "default": [
+            "citizen"
+          ]
+        },
+        "content": {
+          "type": "object",
+          "description": "Chứa nội dung tĩnh hoặc cấu hình Form fields",
+          "properties": {
+            "fields": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/form_field"
+              }
+            },
+            "submit_api": {
+              "type": "string",
+              "description": "Dùng cho type: form"
+            }
+          }
+        },
+        "data_source": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "Key trỏ tới Data Source Map ở root"
+            },
+            "params": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "key"
+          ]
+        },
+        "action": {
+          "$ref": "#/definitions/action"
+        },
+        "style": {
+          "type": "object"
+        },
+        "fallback": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Thông báo hiển thị khi Component bị lỗi load"
+            }
+          }
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ]
+    },
+    "action": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "navigate",
+            "call",
+            "open_url",
+            "submit_form",
+            "show_toast",
+            "open_pdf"
+          ]
+        },
+        "params": {
+          "type": "object",
+          "description": "Chứa các tham số động như page_id, phone, url..."
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "form_field": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "text",
+            "number",
+            "email",
+            "phone",
+            "image",
+            "location",
+            "select"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "description": "Tên hiển thị của trường dữ liệu"
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Chữ mờ hướng dẫn nhập liệu"
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        },
+        "require_native_permission": {
+          "type": "boolean",
+          "default": false,
+          "description": "Nếu là true, Zalo Mini App sẽ gọi API xin quyền Camera/Vị trí thay vì mở input thường"
+        },
+        "validation_regex": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "label"
+      ]
+    }
+  }
+}

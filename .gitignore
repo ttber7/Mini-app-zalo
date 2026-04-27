@@ -1,0 +1,23 @@
+# WordPress
+System-wordpress/wp-config.php
+System-wordpress/wp-content/uploads/
+System-wordpress/wp-content/cache/
+System-wordpress/wp-content/upgrade/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.bak
+
+# OS
+.DS_Store
+Thumbs.db
+
+# NotebookLM
+notebooklm-mcp-cli/.git/
