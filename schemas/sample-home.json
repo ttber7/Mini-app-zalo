@@ -1,0 +1,171 @@
+{
+  "version": "1.0.0",
+  "cache_version": "v1.0.1",
+  "tracking_id": "GA-123456789",
+  "tenant_id": "phuong_ben_nghe",
+  "entry_page": "home",
+  "last_updated": "2026-04-23T13:00:00Z",
+  "global_config": {
+    "primary_color": "#0055AA",
+    "app_name": "Công an Phường Bến Nghé",
+    "logo_url": "https://example.com/logo.png"
+  },
+  "data_sources": {
+    "news_api": {
+      "api": "/wp-json/miniapp/v1/news",
+      "method": "GET",
+      "cache": 600
+    },
+    "submit_report_api": {
+      "api": "/wp-json/miniapp/v1/submit-report",
+      "method": "POST"
+    }
+  },
+  "pages": {
+    "home": {
+      "id": "home",
+      "title": "Trang chủ",
+      "visible_for": [
+        "citizen",
+        "officer"
+      ],
+      "layout": [
+        {
+          "id": "banner_01",
+          "type": "banner",
+          "visible_for": [
+            "citizen",
+            "officer"
+          ],
+          "content": {
+            "image_url": "https://example.com/banner.jpg",
+            "title": "Chào mừng bạn đến với Cổng thông tin"
+          }
+        },
+        {
+          "id": "menu_grid",
+          "type": "grid_menu",
+          "content": {
+            "columns": 3,
+            "items": [
+              {
+                "id": "item_report",
+                "label": "Phản ánh",
+                "icon": "zi-location",
+                "action": {
+                  "type": "navigate",
+                  "params": {
+                    "page": "form_report"
+                  }
+                }
+              },
+              {
+                "id": "item_news",
+                "label": "Tin tức",
+                "icon": "zi-list",
+                "action": {
+                  "type": "navigate",
+                  "params": {
+                    "page": "page_news"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "latest_news",
+          "type": "article_list",
+          "content": {
+            "title": "Tin mới nhất"
+          },
+          "data_source": {
+            "key": "news_api",
+            "params": {
+              "limit": 5
+            }
+          }
+        }
+      ]
+    },
+    "form_report": {
+      "id": "form_report",
+      "title": "Phản ánh hiện trường",
+      "visible_for": [
+        "citizen"
+      ],
+      "layout": [
+        {
+          "id": "report_form_component",
+          "type": "form",
+          "content": {
+            "fields": [
+              {
+                "id": "full_name",
+                "type": "text",
+                "label": "Họ và tên",
+                "placeholder": "Nhập họ tên của bạn",
+                "required": true
+              },
+              {
+                "id": "phone",
+                "type": "phone",
+                "label": "Số điện thoại",
+                "placeholder": "Ví dụ: 0901234567",
+                "required": true
+              },
+              {
+                "id": "description",
+                "type": "text",
+                "label": "Nội dung phản ánh",
+                "placeholder": "Mô tả sự việc...",
+                "required": true
+              },
+              {
+                "id": "location",
+                "type": "location",
+                "label": "Vị trí hiện trường",
+                "placeholder": "Đang lấy tọa độ...",
+                "required": true,
+                "require_native_permission": true
+              },
+              {
+                "id": "evidence_image",
+                "type": "image",
+                "label": "Hình ảnh minh chứng",
+                "placeholder": "Chụp ảnh hiện trường",
+                "required": false,
+                "require_native_permission": true
+              }
+            ],
+            "submit_api": "submit_report_api",
+            "submit_success_action": {
+              "type": "show_toast",
+              "params": {
+                "message": "Cảm ơn bạn! Thông tin đã được gửi đến cơ quan Công an.",
+                "duration": 3000
+              }
+            }
+          }
+        }
+      ]
+    },
+    "page_news": {
+      "id": "page_news",
+      "title": "Tin tức An ninh trật tự",
+      "visible_for": [
+        "citizen",
+        "officer"
+      ],
+      "layout": [
+        {
+          "id": "news_list_full",
+          "type": "article_list",
+          "data_source": {
+            "key": "news_api"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "app": {
+    "title": "Zalo Mini App Công An",
+    "headerTitle": "Công an Phường",
+    "headerColor": "#0068FF",
+    "textColor": "white",
+    "statusBarColor": "0068FF",
+    "actionBarmode": "normal"
+  }
+}
