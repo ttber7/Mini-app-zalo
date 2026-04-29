@@ -252,52 +252,9 @@ export function renderLatestNews(data) {
                 <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">📄</div>
                 <h3 class="font-bold text-[16px] text-gray-900">${sectionTitle}</h3>
             </div>
-            <a href="#" class="text-[12px] font-bold text-blue-600 hover:underline">Xem tất cả</a>
         </div>
-        
-        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-            <div class="p-4">
-                <!-- News Meta -->
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-7 h-7 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 text-xs shadow-inner">📰</div>
-                        <span class="text-[11px] font-black text-blue-700 uppercase tracking-tight">Tin an ninh</span>
-                    </div>
-                    <button class="text-[11px] font-bold text-gray-400 hover:text-blue-500">Xem thêm</button>
-                </div>
-                
-                <!-- News Title -->
-                <h4 class="text-[15px] font-bold text-gray-900 leading-snug mb-4">
-                    Thông báo: Lịch phát sóng chương trình nghệ thuật "Giai điệu bình yên" số 59 với chủ đề "80 năm Công an nhân dân"...
-                </h4>
-                
-                <!-- News Image -->
-                <div class="rounded-2xl overflow-hidden shadow-lg aspect-[16/9] mb-4 relative group">
-                    <img src="https://congan.haiphong.gov.vn/uploads/haiphong/portal/congan/news/2024_04/17/tt_an_ninh.jpg" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-                
-                <!-- News Footer -->
-                <div class="flex items-center justify-between pt-2 border-t border-gray-50 mt-2">
-                    <div class="flex items-center text-[10px] text-gray-400 font-bold space-x-3">
-                        <div class="flex items-center"><span class="mr-1">📅</span> 17/04/2026</div>
-                        <div class="flex items-center"><span class="mr-1">🛡️</span> CA Xã Cần Đước</div>
-                    </div>
-                    <div class="flex space-x-2">
-                        <span class="w-6 h-6 bg-gray-50 rounded-full flex items-center justify-center text-[10px]">👍</span>
-                        <span class="w-6 h-6 bg-gray-50 rounded-full flex items-center justify-center text-[10px]">🔗</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Scrolling Text / Marquee Style Notice -->
-        <div class="mt-6 bg-gradient-to-r from-gray-50 to-white border border-gray-100 rounded-2xl p-4 flex items-center space-x-4 shadow-sm">
-            <div class="w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center text-2xl animate-bounce-slow">⚖️</div>
-            <div class="flex-1 overflow-hidden">
-                <div class="text-[12px] font-black text-gray-900 leading-tight uppercase tracking-tight">Cập nhật tin mới nhất</div>
-                <div class="text-[10px] text-gray-500 mt-0.5 truncate">về pháp luật và an ninh trật tự địa bàn xã Cần Đước...</div>
-            </div>
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 text-center">
+            <p class="text-sm text-gray-500 italic">Tính năng tin tức đang được đồng bộ hóa...</p>
         </div>
     `;
     return container;
