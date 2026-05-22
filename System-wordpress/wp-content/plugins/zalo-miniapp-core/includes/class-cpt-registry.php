@@ -15,6 +15,10 @@ class Zalo_MiniApp_CPT_Registry
         // Tạo Menu Cha trước
         add_action('admin_menu', array($this, 'register_parent_menu'), 9);
 
+        // Xử lý export/import khi submit
+        add_action('admin_init', array($this, 'handle_export_request'));
+        add_action('admin_init', array($this, 'handle_import_request'));
+
         // Đăng ký các CPT
         $this->register_zalo_report();
         $this->register_zalo_news();
@@ -28,18 +32,151 @@ class Zalo_MiniApp_CPT_Registry
         add_menu_page(
             'Quản lý Zalo App',
             'Zalo App',
-            'manage_options',
+            'edit_posts',
             'zalo-miniapp',
             function () {
-                // Callback fix lỗi trắng trang
-                echo '<div class="wrap">';
-                echo '<h1>Hệ thống Quản trị Zalo Mini App</h1>';
-                echo '<p>Hệ thống Backend Headless đã hoạt động ổn định. Vui lòng chọn các tính năng quản lý ở menu bên trái.</p>';
-                echo '</div>';
+                if (class_exists('Zalo_MiniApp_SDUI_Builder')) {
+                    Zalo_MiniApp_SDUI_Builder::render_main_dashboard_page();
+                } else {
+                    echo '<div class="wrap">';
+                    echo '<h1>Hệ thống Quản trị Zalo Mini App</h1>';
+                    echo '<p>Hệ thống Backend Headless đã hoạt động ổn định. Vui lòng chọn các tính năng quản lý ở menu bên trái.</p>';
+                    echo '</div>';
+                }
             },
             'dashicons-smartphone',
             20
         );
+
+        add_submenu_page(
+            'zalo-miniapp',
+            'Nhập/Xuất cấu hình',
+            'Nhập/Xuất cấu hình',
+            'manage_options',
+            'zalo-miniapp-import-export',
+            array($this, 'render_import_export_page')
+        );
+    }
+
+    public function handle_export_request()
+    {
+        if (isset($_GET['action']) && $_GET['action'] === 'zalo_miniapp_export' && current_user_can('manage_options')) {
+            check_admin_referer('zalo_miniapp_export_action', 'zalo_miniapp_export_nonce');
+
+            $config_data = array(
+                'miniapp_name'          => get_option('_miniapp_name'),
+                'miniapp_logo'          => get_option('_miniapp_logo'),
+                'miniapp_primary_color' => get_option('_miniapp_primary_color'),
+                'miniapp_version'       => get_option('_miniapp_version'),
+                'miniapp_entry_page'    => get_option('_miniapp_entry_page'),
+                'miniapp_pages'         => get_option('_miniapp_pages'),
+                'zalo_oa_config'        => get_option('_zalo_oa_config'),
+            );
+
+            $json_data = wp_json_encode($config_data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+            $filename = 'zalo-miniapp-config-' . date('Y-m-d') . '.json';
+
+            header('Content-Type: application/json; charset=utf-8');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+            echo $json_data;
+            exit;
+        }
+    }
+
+    public function handle_import_request()
+    {
+        if (isset($_POST['zalo_miniapp_import_submit']) && current_user_can('manage_options')) {
+            check_admin_referer('zalo_miniapp_import_action', 'zalo_miniapp_import_nonce');
+
+            $json_content = '';
+            if (!empty($_FILES['import_file']['tmp_name'])) {
+                $json_content = file_get_contents($_FILES['import_file']['tmp_name']);
+            } elseif (!empty($_POST['import_text'])) {
+                $json_content = stripslashes($_POST['import_text']);
+            }
+
+            if (empty($json_content)) {
+                set_transient('zalo_miniapp_import_error', 'Vui lòng chọn file JSON hoặc dán nội dung cấu hình.', 30);
+                wp_safe_redirect(admin_url('admin.php?page=zalo-miniapp-import-export'));
+                exit;
+            }
+
+            $data = json_decode($json_content, true);
+            if ($data === null || !is_array($data)) {
+                set_transient('zalo_miniapp_import_error', 'Định dạng JSON không hợp lệ.', 30);
+                wp_safe_redirect(admin_url('admin.php?page=zalo-miniapp-import-export'));
+                exit;
+            }
+
+            $keys = ['miniapp_name', 'miniapp_logo', 'miniapp_primary_color', 'miniapp_version', 'miniapp_entry_page', 'miniapp_pages', 'zalo_oa_config'];
+            foreach ($keys as $key) {
+                if (isset($data[$key])) {
+                    update_option('_' . $key, $data[$key]);
+                }
+            }
+
+            // Kích hoạt việc sinh lại file JSON tĩnh
+            update_option('zalo_miniapp_need_build', 1);
+
+            set_transient('zalo_miniapp_import_success', 'Đã nhập cấu hình và tự động lên lịch biên dịch JSON thành công!', 30);
+            wp_safe_redirect(admin_url('admin.php?page=zalo-miniapp-import-export'));
+            exit;
+        }
+    }
+
+    public function render_import_export_page()
+    {
+        $error = get_transient('zalo_miniapp_import_error');
+        $success = get_transient('zalo_miniapp_import_success');
+        delete_transient('zalo_miniapp_import_error');
+        delete_transient('zalo_miniapp_import_success');
+
+        echo '<div class="wrap">';
+        echo '<h1>Nhập/Xuất cấu hình Giao diện Zalo Mini App</h1>';
+        echo '<p>Trang này cho phép bạn lưu trữ cấu hình giao diện hiện tại của Zalo Mini App dưới dạng file JSON hoặc nạp cấu hình mới.</p>';
+
+        if ($error) {
+            echo '<div class="notice notice-error"><p>' . esc_html($error) . '</p></div>';
+        }
+        if ($success) {
+            echo '<div class="notice notice-success"><p>' . esc_html($success) . '</p></div>';
+        }
+
+        echo '<div style="display: flex; gap: 40px; margin-top: 20px;">';
+
+        // Khối Xuất (Export)
+        echo '<div style="flex: 1; background: #fff; padding: 20px; border: 1px solid #ccd0d4; border-radius: 4px; box-shadow: 0 1px 1px rgba(0,0,0,.04);">';
+        echo '<h2>Xuất cấu hình (Export)</h2>';
+        echo '<p>Tải về file JSON chứa toàn bộ cấu hình giao diện (SDUI), menu, hotline, và Zalo OA token hiện tại.</p>';
+        
+        $export_url = wp_nonce_url(
+            admin_url('admin.php?action=zalo_miniapp_export'),
+            'zalo_miniapp_export_action',
+            'zalo_miniapp_export_nonce'
+        );
+        echo '<p style="margin-top: 30px;"><a href="' . esc_url($export_url) . '" class="button button-primary button-large" style="display: inline-flex; align-items: center; justify-content: center; height: 46px; padding: 0 24px; font-size: 14px; font-weight: 600;"><span class="dashicons dashicons-download" style="margin-right: 8px; margin-top: 4px;"></span> TẢI FILE CẤU HÌNH (.JSON)</a></p>';
+        echo '</div>';
+
+        // Khối Nhập (Import)
+        echo '<div style="flex: 1; background: #fff; padding: 20px; border: 1px solid #ccd0d4; border-radius: 4px; box-shadow: 0 1px 1px rgba(0,0,0,.04);">';
+        echo '<h2>Nhập cấu hình (Import)</h2>';
+        echo '<form method="post" enctype="multipart/form-data">';
+        wp_nonce_field('zalo_miniapp_import_action', 'zalo_miniapp_import_nonce');
+
+        echo '<p>Chọn file JSON cấu hình đã lưu trước đó:</p>';
+        echo '<p><input type="file" name="import_file" accept=".json" class="button" style="width: 100%; border: 1px dashed #ccc; padding: 10px; background: #fbfbfb;"></p>';
+
+        echo '<p style="margin: 20px 0 10px;">Hoặc dán trực tiếp nội dung JSON vào đây:</p>';
+        echo '<p><textarea name="import_text" rows="8" placeholder=\'{"miniapp_name": "Công an Xã...", ...}\' style="width: 100%; font-family: monospace; font-size: 12px; border: 1px solid #ccd0d4; border-radius: 4px; padding: 10px;"></textarea></p>';
+
+        echo '<p style="margin-top: 20px;"><button type="submit" name="zalo_miniapp_import_submit" class="button button-secondary button-large" style="display: inline-flex; align-items: center; justify-content: center; height: 46px; padding: 0 24px; font-size: 14px; font-weight: 600;"><span class="dashicons dashicons-upload" style="margin-right: 8px; margin-top: 4px;"></span> NHẬP CẤU HÌNH</button></p>';
+        echo '</form>';
+        echo '</div>';
+
+        echo '</div>'; // End flex container
+        echo '</div>'; // End wrap
     }
 
     private function register_zalo_report()
@@ -95,7 +232,7 @@ class Zalo_MiniApp_CPT_Registry
             'show_in_menu' => 'zalo-miniapp',
             'supports' => array('title', 'thumbnail', 'editor', 'custom-fields'), // Cần editor cho Tin tức
 
-            'capability_type' => 'zalo_news',
+            'capability_type' => 'post',
             'map_meta_cap' => true,
 
             'show_in_rest' => false,
@@ -121,7 +258,7 @@ class Zalo_MiniApp_CPT_Registry
             'show_in_menu' => 'zalo-miniapp',
             'supports' => array('title', 'thumbnail', 'custom-fields'),
 
-            'capability_type' => 'zalo_officer',
+            'capability_type' => 'post',
             'map_meta_cap' => true,
 
             'show_in_rest' => false,
@@ -147,7 +284,7 @@ class Zalo_MiniApp_CPT_Registry
             'show_in_menu' => 'zalo-miniapp',
             'supports' => array('title', 'custom-fields'),
 
-            'capability_type' => 'zalo_schedule',
+            'capability_type' => 'post',
             'map_meta_cap' => true,
 
             'show_in_rest' => false,
@@ -174,7 +311,7 @@ class Zalo_MiniApp_CPT_Registry
             'supports' => array('title', 'editor', 'custom-fields'),
             'hierarchical' => true, // Cho phép làm thư mục cha/con
 
-            'capability_type' => 'zalo_faq',
+            'capability_type' => 'post',
             'map_meta_cap' => true,
 
             'show_in_rest' => false,

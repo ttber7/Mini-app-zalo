@@ -19,10 +19,18 @@
 
 /* Hiệu ứng kính (Glassmorphism) */
 .glass-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.premium-shadow {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.blue-gradient {
+  background: linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%);
 }
 
 #app {
@@ -30,9 +38,26 @@
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
-  background-color: #F8F9FC;
+  background-color: #F0F2F5;
   position: relative;
-  padding-bottom: 100px; /* Chừa chỗ cho Bottom Nav */
+  padding-bottom: 100px;
+}
+
+.nav-active {
+  color: #0068FF;
+  position: relative;
+}
+
+.nav-active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background-color: #0068FF;
+  border-radius: 50%;
 }
 
 /* Animation cho các card */

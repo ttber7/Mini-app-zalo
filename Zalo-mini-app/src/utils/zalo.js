@@ -47,3 +47,26 @@ export async function callPhone(phoneNumber) {
         window.location.href = `tel:${phoneNumber}`;
     }
 }
+
+/**
+ * Lấy thông tin user định danh của Zalo
+ * @returns {Promise<Object>} Trả về userInfo hoặc object chứa id = 'guest_user' làm fallback
+ */
+export function getZaloUserInfo() {
+    return new Promise((resolve) => {
+        if (typeof api !== 'undefined' && api.getUserInfo) {
+            api.getUserInfo({
+                success: (data) => {
+                    resolve(data.userInfo || { id: 'guest_user', name: 'Khách' });
+                },
+                fail: (err) => {
+                    console.warn('Lỗi lấy thông tin Zalo User:', err);
+                    resolve({ id: 'guest_user', name: 'Khách' });
+                }
+            });
+        } else {
+            resolve({ id: 'guest_user', name: 'Khách' });
+        }
+    });
+}
+

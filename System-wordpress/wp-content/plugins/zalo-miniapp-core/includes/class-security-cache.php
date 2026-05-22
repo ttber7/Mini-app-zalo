@@ -13,6 +13,15 @@ class Zalo_MiniApp_Security_Cache
     {
         add_action('zalo_miniapp_build_json', array($this, 'generate_ui_config_json'));
         add_action('admin_notices', array($this, 'display_validation_errors'));
+        add_action('admin_init', array($this, 'check_and_build_json'));
+    }
+
+    public function check_and_build_json()
+    {
+        if (get_option('zalo_miniapp_need_build')) {
+            delete_option('zalo_miniapp_need_build');
+            $this->generate_ui_config_json();
+        }
     }
 
     public function generate_ui_config_json()
@@ -22,7 +31,10 @@ class Zalo_MiniApp_Security_Cache
             return;
         }
 
-        $pages = carbon_get_theme_option('miniapp_pages');
+        $pages = get_option('_miniapp_pages');
+        if (empty($pages)) {
+            $pages = carbon_get_theme_option('miniapp_pages');
+        }
         if (empty($pages))
             return;
 
@@ -63,7 +75,7 @@ class Zalo_MiniApp_Security_Cache
         }
 
         // --- BƯỚC 2: VALIDATION LỚP 2 (Entry Page) ---
-        $entry_page = carbon_get_theme_option('miniapp_entry_page') ?: 'home';
+        $entry_page = get_option('_miniapp_entry_page') ?: carbon_get_theme_option('miniapp_entry_page') ?: 'home';
         if (!in_array($entry_page, $page_ids)) {
             $msg = 'LỖI: Mã Trang Chủ (Entry Page) "' . $entry_page . '" không tồn tại!';
             set_transient('zalo_sdui_error', $msg, 60);
@@ -76,8 +88,38 @@ class Zalo_MiniApp_Security_Cache
         // --- BƯỚC 3: TRANSFORMER (Chuẩn hóa) ---
         $base_api_url = '/wp-json/miniapp/v1';
 
+        $oa_config = get_option('_zalo_oa_config');
+        if (empty($oa_config)) {
+            $oa_config = carbon_get_theme_option('zalo_oa_config');
+        }
+        $oa_id = '';
+        if (!empty($oa_config) && is_array($oa_config) && isset($oa_config[0]['oa_id'])) {
+            $oa_id = sanitize_text_field($oa_config[0]['oa_id']);
+        }
+
+        $logo_id = get_option('_miniapp_logo');
+        if (empty($logo_id)) {
+            $logo_id = carbon_get_theme_option('miniapp_logo');
+        }
+        $logo_url = '';
+        if ($logo_id) {
+            if (is_numeric($logo_id)) {
+                $logo_url = wp_get_attachment_url($logo_id);
+            } else {
+                $logo_url = $logo_id;
+            }
+        }
+        if (empty($logo_url)) {
+            $logo_url = plugins_url('templates/assets/logo_cong_an.png', dirname(__FILE__));
+        }
+
+        $miniapp_version = get_option('_miniapp_version');
+        if (empty($miniapp_version)) {
+            $miniapp_version = carbon_get_theme_option('miniapp_version') ?: '1.0.0';
+        }
+
         $schema = array(
-            'version' => '1.0.0',
+            'version' => sanitize_text_field($miniapp_version),
             'min_app_version' => '1.0.0',
             'cache_version' => '', // Tạm để rỗng, build xong sẽ gán sau
             'schema_hash' => '',
@@ -86,9 +128,13 @@ class Zalo_MiniApp_Security_Cache
             'entry_page' => sanitize_text_field($entry_page),
             'last_updated' => current_time('c'),
             'global_config' => array(
-                'app_name' => sanitize_text_field(carbon_get_theme_option('miniapp_name')),
-                'primary_color' => sanitize_hex_color(carbon_get_theme_option('miniapp_primary_color')),
-                'logo_url' => carbon_get_theme_option('miniapp_logo') ? esc_url_raw(wp_get_attachment_url(carbon_get_theme_option('miniapp_logo'))) : ''
+                'app_name' => sanitize_text_field(get_option('_miniapp_name') ?: carbon_get_theme_option('miniapp_name')),
+                'primary_color' => sanitize_hex_color(get_option('_miniapp_primary_color') ?: carbon_get_theme_option('miniapp_primary_color')),
+                'logo_url' => esc_url_raw($logo_url),
+                'oa_id' => $oa_id,
+                'station_address' => sanitize_text_field(get_option('_station_address') ?: carbon_get_theme_option('station_address')),
+                'station_phone' => sanitize_text_field(get_option('_station_phone') ?: carbon_get_theme_option('station_phone')),
+                'station_map_url' => esc_url_raw(get_option('_station_map_url') ?: carbon_get_theme_option('station_map_url'))
             ),
             'data_sources' => array(
                 'news_api' => array('api' => $base_api_url . '/news', 'method' => 'GET', 'cache' => 600),
@@ -97,8 +143,8 @@ class Zalo_MiniApp_Security_Cache
             'pages' => array()
         );
 
-        // ĐÃ SỬA: Mở khóa cho 3 component mới
-        $allowed_types = ['banner', 'grid_menu', 'article_list', 'form', 'official_channel', 'statistics_grid', 'emergency_list'];
+        // ĐÃ SỬA: Mở khóa cho 3 component mới và faq_list
+        $allowed_types = ['banner', 'grid_menu', 'article_list', 'form', 'official_channel', 'statistics_grid', 'emergency_list', 'faq_list'];
 
         foreach ($pages as $page) {
             $page_id = sanitize_text_field($page['page_id']);
@@ -223,6 +269,13 @@ class Zalo_MiniApp_Security_Cache
                             }
                         }
                         $formatted_comp['content'] = array('hotlines' => $hotlines);
+                    }
+                    // [ĐÃ THÊM]: Parse data cho FAQ List
+                    elseif ($type === 'faq_list') {
+                        $formatted_comp['content'] = array(
+                            'title' => sanitize_text_field($comp['title'] ?? 'Câu hỏi thường gặp'),
+                            'search_placeholder' => sanitize_text_field($comp['search_placeholder'] ?? 'Nhập từ khóa cần tìm...')
+                        );
                     }
 
                     $page_data['layout'][] = $formatted_comp;

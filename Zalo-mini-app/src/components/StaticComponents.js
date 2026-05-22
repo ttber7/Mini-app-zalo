@@ -1,356 +1,502 @@
 import { navigate, openWebUrl, callPhone } from '../utils/zalo.js';
+import { config } from '../api/config.js';
 
 /**
- * 1. HERO HEADER (Phần trên cùng màu tím/xanh gradient)
- */
-/**
- * 1. HERO HEADER (Phần trên cùng màu xanh gradient)
+ * 1. HERO HEADER (Phần trên cùng màu xanh đậm gradient)
  */
 export function renderHeroHeader(data, globalConfig = {}) {
     const header = document.createElement('div');
-    // Bỏ absolute cho thẻ card, dùng natural flow để dễ quản lý code về sau
-    header.className = 'relative w-full pt-12 pb-8 px-4 bg-gradient-to-b from-[#0091FF] via-[#00BFFF] to-[#33CCFF] rounded-b-[40px] shadow-lg overflow-hidden flex flex-col space-y-6';
+    header.className = 'relative w-full pt-12 pb-24 px-4 bg-gradient-to-br from-[#1e3a8a] to-[#2D58D7] overflow-hidden flex flex-col items-center';
 
-    // --- LẤY DỮ LIỆU ĐỘNG TỪ BACKEND ---
-    const appName = globalConfig.app_name || 'CÔNG AN XÃ CẦN ĐƯỚC';
-    const logoUrl = globalConfig.logo_url || 'https://upload.wikimedia.org/wikipedia/commons/a/a1/Logo_Huy_hi%E1%BB%87u_C%C3%B4ng_an_nh%C3%A2n_d%C3%A2n_Vi%E1%BB%87t_Nam.png';
-    const temp = globalConfig.weather?.temp || '--°C';
-    const weatherDesc = globalConfig.weather?.desc || 'Cập nhật trực tiếp';
+    const appName = globalConfig.app_name || globalConfig.app_title || 'CÔNG AN XÃ CẦN ĐƯỚC';
+    const logoUrl = globalConfig.logo_url || 'https://upload.wikimedia.org/wikipedia/commons/a/a1/Logo_Huy_hiệu_Công_an_nhân_dân_Việt_Nam.png';
+    const temp = globalConfig.weather?.temp || '25.0°C';
+    const weatherDesc = globalConfig.weather?.desc || 'mây rải rác';
 
-    // Background Pattern
+    const phone = globalConfig.station_phone || '0272.3881.213';
+
     const pattern = document.createElement('div');
-    pattern.className = 'absolute inset-0 opacity-10 pointer-events-none overflow-hidden flex justify-center items-center z-0';
+    pattern.className = 'absolute inset-0 opacity-20 pointer-events-none z-0';
     pattern.innerHTML = `
-        <div class="w-96 h-96 border-[40px] border-white/20 rounded-full border-dashed absolute top-0 -translate-y-1/4"></div>
-        <div class="w-64 h-64 border-[20px] border-white/20 rounded-full border-dashed absolute top-10 -translate-y-1/4"></div>
+        <div class="absolute inset-0 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Logo_Huy_hi%E1%BB%87u_C%C3%B4ng_an_nh%C3%A2n_d%C3%A2n_Vi%E1%BB%87t_Nam.png/600px-Logo_Huy_hi%E1%BB%87u_C%C3%B4ng_an_nh%C3%A2n_d%C3%A2n_Vi%E1%BB%87t_Nam.png')] bg-center bg-no-repeat bg-contain scale-150 grayscale brightness-200 opacity-10"></div>
     `;
     header.appendChild(pattern);
 
-    // Ngày tháng hiện tại
-    const today = new Date();
-    const days = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
-    const dateString = `${days[today.getDay()]} - ${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
-
     header.innerHTML += `
-        <!-- Phần trên cùng -->
-        <div class="relative z-10 flex flex-col items-center text-center text-white">
-            <div class="w-16 h-16 bg-white p-1 rounded-2xl shadow-xl mb-3">
+        <div class="relative z-10 flex flex-col items-center text-center text-white mb-8">
+            <div class="w-20 h-20 bg-white/10 backdrop-blur-md p-2 rounded-3xl mb-4 border border-white/20 shadow-2xl">
                 <img src="${logoUrl}" class="w-full h-full object-contain" />
             </div>
-            <h1 class="text-[20px] font-black uppercase tracking-wide leading-tight">${appName}</h1>
-            <p class="text-[12px] font-bold opacity-90 mt-1 uppercase">HUYỆN CẦN ĐƯỚC - LONG AN</p>
-            
-            <div class="grid grid-cols-2 gap-3 w-full mt-6 px-2">
-                <button class="flex items-center justify-center space-x-2 bg-white/20 backdrop-blur-md py-3 px-2 rounded-xl border border-white/30 hover:bg-white/40 transition">
-                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-sm shadow-sm">📄</div>
-                    <div class="text-left">
-                        <div class="text-[11px] font-bold">Tin tức nổi bật</div>
-                        <div class="text-[9px] opacity-80">Cập nhật mới</div>
-                    </div>
-                </button>
-                <button onclick="window.location.href='tel:02253925128'" class="flex items-center justify-center space-x-2 bg-white/20 backdrop-blur-md py-3 px-2 rounded-xl border border-white/30 hover:bg-white/40 transition">
-                    <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white text-sm shadow-sm">📞</div>
-                    <div class="text-left">
-                        <div class="text-[11px] font-bold">Hotline</div>
-                        <div class="text-[9px] opacity-90 font-mono">02253.925.128</div>
-                    </div>
-                </button>
-            </div>
+            <h1 class="text-[18px] font-black uppercase tracking-[2px] leading-tight drop-shadow-md">${appName}</h1>
+            <p class="text-[14px] font-bold opacity-80 mt-1 uppercase tracking-widest">Huyện Cần Đước - Long An</p>
         </div>
 
-        <!-- Thẻ Blue Card (Dùng flow tự nhiên, không dùng absolute đè lên nữa) -->
-        <div class="relative z-10 bg-gradient-to-b from-[#00BFFF] to-[#0091FF] rounded-3xl shadow-xl p-5 flex flex-col space-y-4 border border-white/30 text-white">
-            <!-- Header của thẻ -->
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-white/20 rounded-full p-1 backdrop-blur-sm shadow-inner">
-                         <img src="${logoUrl}" class="w-full h-full object-contain drop-shadow-md" />
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-bold">${appName}</h4>
-                        <p class="text-[10px] opacity-80 italic">Vì nhân dân phục vụ</p>
-                    </div>
-                </div>
-                <div class="text-[10px] bg-black/10 px-2 py-1 rounded-lg font-medium">
-                    ${dateString}
+        <div class="relative z-10 grid grid-cols-2 gap-4 w-full px-2 mb-[-60px]">
+            <div id="hero-news-btn" class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 flex items-center space-x-3 shadow-xl cursor-pointer active:scale-95 transition">
+                <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg text-lg">📄</div>
+                <div class="flex flex-col">
+                    <span class="text-white font-bold text-[13px]">Tin tức nổi bật</span>
+                    <span class="text-white/70 text-[10px]">Cập nhật mới nhất</span>
                 </div>
             </div>
-
-            <!-- Các khối chức năng -->
-            <div class="space-y-3">
-                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 flex items-center space-x-4 border border-white/10 shadow-sm transition hover:bg-white/20">
-                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-lg shadow-inner">👤</div>
-                    <div>
-                        <div class="text-sm font-bold">Xin chào, bạn!</div>
-                        <div class="text-[11px] opacity-80">Chào mừng bạn đến với CA xã Cần Đước</div>
-                    </div>
-                </div> 
-
-                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 flex items-center justify-between border border-white/10 shadow-sm transition hover:bg-white/20">
+            <div id="hero-hotline-btn" class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 flex items-center space-x-3 shadow-xl cursor-pointer active:scale-95 transition">
+                <div class="w-10 h-10 bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg text-lg">📞</div>
+                <div class="flex flex-col">
+                    <span class="text-white font-bold text-[13px]">Đường dây nóng</span>
+                    <span class="text-white/80 text-[11px] font-mono">${phone}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="relative z-20 mt-20 w-full px-2">
+            <div class="bg-gradient-to-br from-[#1E40AF] to-[#3B82F6] rounded-[32px] p-6 shadow-2xl border border-white/20 text-white">
+                <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-lg shadow-inner">📍</div>
+                        <div class="w-14 h-14 bg-white/20 rounded-full p-2 backdrop-blur-md shadow-inner">
+                            <img src="${logoUrl}" class="w-full h-full object-contain" />
+                        </div>
                         <div>
-                            <div class="text-sm font-bold">Khu vực địa bàn</div>
-                            <div class="text-[11px] opacity-80">${weatherDesc}</div>
+                            <h2 class="text-[17px] font-black leading-tight">${appName}</h2>
+                            <p class="text-[11px] opacity-90 font-medium">Vì nhân dân phục vụ</p>
                         </div>
                     </div>
-                    <div class="text-right flex items-center space-x-3">
-                        <div class="text-xl font-bold">${temp}</div>
-                        <div class="text-2xl" id="weather-icon">☁️</div>
+                    <div class="text-right">
+                        <p class="text-[11px] font-bold opacity-80 uppercase">${new Date().toLocaleDateString('vi-VN', { weekday: 'long' })}</p>
+                        <p class="text-[11px] font-bold">${new Date().toLocaleDateString('vi-VN')}</p>
                     </div>
                 </div>
-            </div>
 
-            <!-- Footer của thẻ -->
-            <div class="flex items-center justify-center space-x-2 bg-black/5 py-2 rounded-xl">
-                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></div>
-                <div class="text-[10px] font-bold uppercase tracking-widest opacity-90">Hệ thống ổn định</div>
+                <div class="space-y-4">
+                    <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-xl shadow-inner">👤</div>
+                        <div>
+                            <p class="text-[14px] font-bold">Xin chào, bạn!</p>
+                            <p class="text-[11px] opacity-80">Chào mừng bạn đến với ứng dụng</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-xl shadow-inner">📍</div>
+                            <div>
+                                <p class="text-[14px] font-bold">Huyện Cần Đước, Long An</p>
+                                <p class="text-[11px] opacity-80">${weatherDesc}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl font-black">${temp}</span>
+                            <span class="text-3xl animate-bounce-slow">☁️</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 flex items-center justify-center space-x-2 bg-black/10 py-2 rounded-xl">
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest opacity-90">Hệ thống hoạt động bình thường</span>
+                </div>
             </div>
         </div>
     `;
+
+    // Gắn event listeners trực tiếp vào DOM của header
+    const newsBtn = header.querySelector('#hero-news-btn');
+    if (newsBtn) {
+        newsBtn.addEventListener('click', () => {
+            const navNews = document.querySelector('.nav-item[data-route="news"]');
+            if (navNews) navNews.click();
+            else navigate('news');
+        });
+    }
+
+    const hotlineBtn = header.querySelector('#hero-hotline-btn');
+    if (hotlineBtn) {
+        hotlineBtn.addEventListener('click', () => {
+            callPhone(phone.replace(/[^0-9+]/g, ''));
+        });
+    }
 
     return header;
 }
 
 /**
- * 2. STATISTICS GRID (4 ô màu)
+ * 2. STATISTICS GRID (4 ô màu rực rỡ)
  */
 export function renderStatsGrid(data) {
     const container = document.createElement('div');
-    container.className = 'mt-10 px-4';
+    container.className = 'mt-12 px-4';
 
-    // Lấy dữ liệu động, fallback về '0' nếu admin chưa nhập
-    const pop = data?.population || '0';
-    const house = data?.households || '0';
-    const area = data?.area || '0';
-    const party = data?.party_members || '0';
-    const updateTime = data?.update_time || 'Đang cập nhật';
+    const pop = data?.population || '38.674';
+    const house = data?.households || '11.524';
+    const area = data?.area || '18,64';
+    const party = data?.party_members || '1794';
+    const subtitle = data?.update_time || 'Số liệu cập nhật tháng 4/2026';
 
     container.innerHTML = `
-        <div class="flex items-center space-x-2 mb-4">
-            <span class="text-xl">📊</span>
-            <h3 class="font-bold text-gray-900">Thống kê xã</h3>
+        <div class="flex items-center space-x-3 mb-6">
+            <div class="w-1 h-6 bg-blue-600 rounded-full"></div>
+            <h3 class="text-[18px] font-black text-gray-800 uppercase tracking-tight">Thống kê xã</h3>
         </div>
         <div class="grid grid-cols-2 gap-4">
-            <div class="bg-gradient-to-br from-[#00BFFF] to-[#0091FF] p-4 rounded-2xl text-white shadow-lg shadow-blue-200">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-xs opacity-80 font-medium">Người dân</span>
-                    <span class="text-lg">👤</span>
+            <div class="bg-blue-500 rounded-3xl p-5 text-white shadow-lg shadow-blue-200 relative overflow-hidden group">
+                <div class="relative z-10">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-[11px] font-bold opacity-80 uppercase">Người dân</span>
+                        <span class="text-xl">👤</span>
+                    </div>
+                    <div class="text-[24px] font-black tracking-tighter mb-1">${pop}</div>
+                    <div class="text-[11px] font-bold opacity-80">Dân số</div>
                 </div>
-                <div class="text-xl font-black">${pop}</div>
-                <div class="text-[10px] opacity-80 uppercase font-bold mt-1">Dân số</div>
             </div>
-            <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 p-4 rounded-2xl text-white shadow-lg shadow-emerald-200">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-xs opacity-80 font-medium">Hộ dân</span>
-                    <span class="text-lg">🏠</span>
+            <div class="bg-emerald-500 rounded-3xl p-5 text-white shadow-lg shadow-emerald-200 relative overflow-hidden group">
+                <div class="relative z-10">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-[11px] font-bold opacity-80 uppercase">Hộ dân</span>
+                        <span class="text-xl">🏠</span>
+                    </div>
+                    <div class="text-[24px] font-black tracking-tighter mb-1">${house}</div>
+                    <div class="text-[11px] font-bold opacity-80">Hộ gia đình</div>
                 </div>
-                <div class="text-xl font-black">${house}</div>
-                <div class="text-[10px] opacity-80 uppercase font-bold mt-1">Hộ gia đình</div>
             </div>
-            <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-2xl text-white shadow-lg shadow-purple-200">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-xs opacity-80 font-medium">Diện tích</span>
-                    <span class="text-lg">📍</span>
+            <div class="bg-sky-500 rounded-3xl p-5 text-white shadow-lg shadow-sky-200 relative overflow-hidden group">
+                <div class="relative z-10">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-[11px] font-bold opacity-80 uppercase">Diện tích</span>
+                        <span class="text-xl">📍</span>
+                    </div>
+                    <div class="text-[24px] font-black tracking-tighter mb-1">${area} km2</div>
+                    <div class="text-[11px] font-bold opacity-80">Diện tích</div>
                 </div>
-                <div class="text-xl font-black">${area} km2</div>
-                <div class="text-[10px] opacity-80 uppercase font-bold mt-1">Diện tích</div>
             </div>
-            <div class="bg-gradient-to-br from-rose-500 to-rose-600 p-4 rounded-2xl text-white shadow-lg shadow-rose-200">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-xs opacity-80 font-medium">Đảng viên</span>
-                    <span class="text-lg">❤️</span>
+            <div class="bg-rose-500 rounded-3xl p-5 text-white shadow-lg shadow-rose-200 relative overflow-hidden group">
+                <div class="relative z-10">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-[11px] font-bold opacity-80 uppercase">Đảng viên</span>
+                        <span class="text-xl">❤️</span>
+                    </div>
+                    <div class="text-[24px] font-black tracking-tighter mb-1">${party}</div>
+                    <div class="text-[11px] font-bold opacity-80">Đảng viên</div>
                 </div>
-                <div class="text-xl font-black">${party}</div>
-                <div class="text-[10px] opacity-80 uppercase font-bold mt-1">Đảng viên</div>
             </div>
         </div>
-        <p class="text-center text-[10px] text-gray-400 mt-4 italic font-medium">Số liệu cập nhật tháng 4/2026</p>
-    `;
-    return container;
-}
-
-/**
- * 3. OFFICIAL CHANNEL (Kênh chính thức)
- */
-export function renderOfficialChannel(data) {
-    const container = document.createElement('div');
-    container.className = 'mt-6 px-4';
-
-    const coverImg = data?.cover_image || 'https://via.placeholder.com/600x200?text=Banner+Zalo+OA';
-    const oaId = data?.oa_id || '';
-
-    container.innerHTML = `
-        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col">
-            <!-- Header Bar -->
-            <div class="bg-[#2D58D7] p-3 text-white flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <span class="text-base">⭐</span>
-                    <h3 class="font-bold text-[15px] tracking-wide">Kênh chính thức</h3>
-                </div>
-            </div>
-            <div class="bg-[#4169E1] px-4 py-2 text-white/90 text-[10.5px] font-medium">
-                Nhận thông báo và cập nhật mới nhất từ cơ quan
-            </div>
-            
-            <!-- Body -->
-            <div class="p-4 flex flex-col space-y-5">
-                <!-- OA Info Row -->
-                <div class="flex items-center justify-between bg-gray-50/50 p-2 rounded-2xl">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a1/Logo_Huy_hi%E1%BB%87u_C%C3%B4ng_an_nh%C3%A2n_d%C3%A2n_Vi%E1%BB%87t_Nam.png" class="w-full h-full object-contain bg-white" />
-                        </div>
-                        <div>
-                            <h4 class="text-[13px] font-bold text-gray-900 leading-tight">Công an xã Cần Đước</h4>
-                            <div class="text-[10px] text-blue-600 font-bold flex items-center mt-0.5">
-                                <span class="bg-blue-600 text-white text-[7px] w-3 h-3 rounded-full flex items-center justify-center mr-1">✓</span> Kênh chính thức
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="window.location.href='https://zalo.me/${oaId}'" class="bg-[#2D58D7] hover:bg-blue-700 text-white px-6 py-2 rounded-full text-xs font-black shadow-md transition active:scale-95">
-                        Quan tâm
-                    </button>
-                </div>
-                
-                <!-- Sub Action Buttons -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-blue-50/70 p-3 rounded-xl flex items-center space-x-2 border border-blue-100/50">
-                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm shadow-sm">🔔</div>
-                        <span class="text-[11px] font-bold text-blue-800">Thông báo nhanh</span>
-                    </div>
-                    <div class="bg-emerald-50/70 p-3 rounded-xl flex items-center space-x-2 border border-emerald-100/50">
-                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-sm shadow-sm">📅</div>
-                        <span class="text-[11px] font-bold text-emerald-800">Cập nhật 24/7</span>
-                    </div>
-                </div>
-                
-                <!-- Bottom Banner Image (Red one from screenshot) -->
-                <div class="rounded-xl overflow-hidden shadow-md border border-gray-100 relative">
-                    <img src="${coverImg}" class="w-full h-32 object-cover" />
-                    <div class="absolute inset-0 bg-gradient-to-r from-red-600/20 to-transparent pointer-events-none"></div>
-                </div>
-            </div>
+        <div class="mt-6 bg-blue-50/50 py-3 rounded-2xl text-center">
+            <span class="text-[11px] font-bold text-blue-400 italic">${subtitle}</span>
         </div>
     `;
     return container;
 }
 
 /**
- * 4. LATEST NEWS (Thông tin mới nhất)
- * Lưu ý: Phần này hiện tại vẫn render Giao diện tĩnh vì Backend WordPress (Giai đoạn 3) 
- * chưa viết API đẩy bài viết sang. Sẽ móc nối ở giai đoạn sau.
- */
-export function renderLatestNews(data) {
-    const container = document.createElement('div');
-    container.className = 'mt-10 px-4 mb-4';
-    const sectionTitle = data?.title || 'Thông tin mới nhất';
-
-    container.innerHTML = `
-        <div class="flex items-center justify-between mb-4 px-1">
-            <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">📄</div>
-                <h3 class="font-bold text-[16px] text-gray-900">${sectionTitle}</h3>
-            </div>
-        </div>
-        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden p-4 text-center">
-            <p class="text-sm text-gray-500 italic">Tính năng tin tức đang được đồng bộ hóa...</p>
-        </div>
-    `;
-    return container;
-}
-
-/**
- * 5. EMERGENCY CONTACTS (Danh sách nút liên hệ khẩn cấp)
- */
-export function renderEmergencyList(data) {
-    const container = document.createElement('div');
-    container.className = 'px-4 mt-10';
-
-    const contacts = data?.hotlines || [];
-
-    if (contacts.length === 0) return container; // Không render nếu WP rỗng
-
-    container.innerHTML = ` 
-        <div class="flex items-center space-x-2 mb-4">
-            <span class="text-xl text-red-500">📞</span>
-            <h3 class="font-bold text-gray-900">Liên hệ khẩn cấp</h3>
-        </div>
-        <div class="space-y-3">
-            ${contacts.map(c => `
-                <div class="flex items-center justify-between p-4 ${c.color} text-white rounded-2xl shadow-xl transition active:scale-95">
-                    <div class="flex items-center space-x-3">
-                        <div class="text-2xl">${c.icon}</div>
-                        <div>
-                            <div class="text-sm font-bold">${c.label}</div>
-                            <div class="text-[10px] opacity-80">${c.sub}</div>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-lg font-black tracking-tight">${c.phone}</div>
-                        <button onclick="window.location.href='tel:${c.phone}'" class="text-[9px] font-bold bg-white/20 px-3 py-1.5 rounded-full uppercase tracking-wider">Gọi ngay</button>
-                    </div>
-                </div>
-            `).join('')}
-        </div>
-        
-        <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-3 flex items-center justify-center space-x-2">
-            <span class="text-rose-500 text-sm">⚠️</span>
-            <span class="text-[10px] font-bold text-rose-600">Chỉ sử dụng cho các trường hợp khẩn cấp thực sự</span>
-        </div>
-    `;
-    return container;
-}
-
-/**
- * 6. GRID MENU (Các icon chức năng)
+ * 3. GRID MENU (Các tiện ích chính)
  */
 export function renderGridMenu(data) {
     const items = data?.items || [];
     const container = document.createElement('div');
-    container.className = 'px-4 mt-10';
-
-    if (items.length === 0) return container;
+    container.className = 'mt-12 px-4';
 
     container.innerHTML = `
-        <div class="flex items-center space-x-2 mb-4">
-            <span class="text-xl text-blue-500">⚙️</span>
-            <h3 class="font-bold text-gray-900">Tiện ích chính</h3>
+        <div class="flex items-center space-x-3 mb-8">
+            <div class="w-1 h-6 bg-blue-600 rounded-full"></div>
+            <h3 class="text-[18px] font-black text-gray-800 uppercase tracking-tight">Tiện ích chính</h3>
         </div>
-        <div class="grid grid-cols-4 gap-y-8 gap-x-2">
-            ${items.map(item => `
-                <div class="flex flex-col items-center text-center cursor-pointer group active:scale-90 transition">
-                    <div class="w-16 h-16 bg-blue-50/80 group-hover:bg-blue-100 transition rounded-3xl flex items-center justify-center text-3xl shadow-sm mb-2 border border-blue-100/50">
+        <div class="grid grid-cols-4 gap-x-2 gap-y-10">
+            ${items.map((item, index) => `
+                <div data-index="${index}" class="grid-menu-item flex flex-col items-center group cursor-pointer active:scale-90 transition-all">
+                    <div class="w-[68px] h-[68px] bg-blue-50 rounded-[24px] flex items-center justify-center text-[32px] shadow-sm mb-3 border border-blue-100/50 group-hover:bg-blue-100 transition-colors">
                         ${item.icon || '📌'}
                     </div>
-                    <span class="text-[10px] font-bold text-gray-600 leading-tight px-1">${item.label}</span>
+                    <span class="text-[11px] font-bold text-gray-700 leading-[1.3] text-center px-1 h-8 flex items-center">${item.label}</span>
                 </div>
             `).join('')}
         </div>
     `;
+
+    // [FIX 3]: Bắt sự kiện điều hướng cho Grid Menu
+    container.querySelectorAll('.grid-menu-item').forEach(el => {
+        el.addEventListener('click', () => {
+            const idx = el.dataset.index;
+            const item = items[idx];
+            if (!item) return;
+
+            if (item.action_type === 'navigate') {
+                // Kích hoạt giả lập click vào Bottom Nav tương ứng nếu là trang nội bộ
+                const navFaq = document.querySelector(`.nav-item[data-route="${item.action_value}"]`);
+                if (navFaq) navFaq.click();
+                else if (typeof navigate === 'function') navigate(item.action_value);
+            } else if (item.action_type === 'call') {
+                if (typeof callPhone === 'function') callPhone(item.action_value);
+                else window.location.href = `tel:${item.action_value}`;
+            } else if (item.action_type === 'open_url') {
+                if (typeof openWebUrl === 'function') openWebUrl(item.action_value);
+                else window.open(item.action_value, '_blank');
+            }
+        });
+    });
+
+    return container;
+}
+
+/**
+ * 4. OFFICIAL CHANNEL (Kênh chính thức)
+ */
+export function renderOfficialChannel(data, globalConfig = {}) {
+    const container = document.createElement('div');
+    container.className = 'mt-12 px-4';
+    const oaId = globalConfig?.oa_id || data?.oa_id || '502931508216399126';
+    const logoUrl = globalConfig?.logo_url || data?.logo_url || 'https://upload.wikimedia.org/wikipedia/commons/a/a1/Logo_Huy_hiệu_Công_an_nhân_dân_Việt_Nam.png';
+    const appName = globalConfig?.app_name || globalConfig?.app_title || data?.title || 'Công an xã Cần Đước';
+
+    container.innerHTML = `
+        <div class="bg-white rounded-[32px] shadow-2xl border border-white/50 overflow-hidden premium-shadow">
+            <div class="bg-[#2D58D7] p-4 text-white flex items-center space-x-2">
+                <span class="text-lg">⭐</span>
+                <span class="font-black text-[15px] uppercase tracking-wide">Kênh chính thức</span>
+            </div>
+            <div class="p-6">
+                <div id="oa-card-header" class="flex items-center justify-between mb-6 bg-gray-50 p-4 rounded-2xl border border-gray-100 cursor-pointer active:scale-[0.98] transition-transform">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-xl bg-white p-1">
+                            <img src="${logoUrl}" class="w-full h-full object-contain" />
+                        </div>
+                        <div>
+                            <h4 class="text-[15px] font-black text-gray-900 leading-tight">${appName}</h4>
+                            <div class="flex items-center mt-1 text-[10px] text-blue-600 font-black uppercase">
+                                <span class="w-3 h-3 bg-blue-600 text-white rounded-full flex items-center justify-center text-[7px] mr-1">✓</span>
+                                Kênh chính thức
+                            </div>
+                        </div>
+                    </div>
+                    <button id="oa-quan-tam-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full text-[12px] font-black shadow-lg shadow-blue-200 transition active:scale-95 animate-pulse">
+                        Quan tâm
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl flex items-center space-x-3">
+                        <span class="text-xl">🔔</span>
+                        <span class="text-[11px] font-black text-blue-800 uppercase tracking-tighter">Thông báo nhanh</span>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-center space-x-3">
+                        <span class="text-xl">📅</span>
+                        <span class="text-[11px] font-black text-emerald-800 uppercase tracking-tighter">Cập nhật 24/7</span>
+                    </div>
+                </div>
+
+                <div class="rounded-3xl overflow-hidden shadow-inner relative group cursor-pointer active:scale-95 transition-transform" onclick="if(typeof openWebUrl==='function') openWebUrl('https://phapluat.sotuphap.longan.gov.vn/')">
+                    <img src="${data?.cover_image || 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80'}" class="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                    <div class="absolute bottom-4 left-6 right-6">
+                        <p class="text-white text-[12px] font-black uppercase drop-shadow-md">Sổ tay tra cứu pháp luật</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Gắn sự kiện click vào nút Quan tâm để mở trực tiếp Zalo OA
+    const btn = container.querySelector('#oa-quan-tam-btn');
+    if (btn) {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (typeof openWebUrl === 'function') {
+                openWebUrl(`https://zalo.me/${oaId}`);
+            } else {
+                window.open(`https://zalo.me/${oaId}`, '_blank');
+            }
+        });
+    }
+
+    // Gắn sự kiện click vào phần header card thông tin OA để mở trực tiếp Zalo OA
+    const headerCard = container.querySelector('#oa-card-header');
+    if (headerCard) {
+        headerCard.addEventListener('click', () => {
+            if (typeof openWebUrl === 'function') {
+                openWebUrl(`https://zalo.me/${oaId}`);
+            } else {
+                window.open(`https://zalo.me/${oaId}`, '_blank');
+            }
+        });
+    }
+
+    return container;
+}
+
+/**
+ * 5. EMERGENCY CONTACTS
+ */
+export function renderEmergencyList(data) {
+    const container = document.createElement('div');
+    container.className = 'mt-12 px-4 pb-12';
+    const hotlines = data?.hotlines || [];
+
+    // [FIX 2]: Map đúng key từ CPT Carbon Fields & Inline CSS cho màu
+    container.innerHTML = `
+        <div class="flex items-center space-x-3 mb-6">
+            <div class="w-1 h-6 bg-red-600 rounded-full"></div>
+            <h3 class="text-[18px] font-black text-gray-800 uppercase tracking-tight">Liên hệ khẩn cấp</h3>
+        </div>
+        <div class="space-y-4">
+            ${hotlines.map(h => `
+                <div style="background-color: ${h.bg_color || '#ef4444'}" class="rounded-[24px] p-5 text-white shadow-xl flex items-center justify-between relative overflow-hidden group active:scale-95 transition-all">
+                    <div class="flex items-center space-x-4 relative z-10">
+                        <div class="text-3xl">${h.icon || '🚨'}</div>
+                        <div>
+                            <h4 class="text-[15px] font-black uppercase leading-tight">${h.label}</h4>
+                            <p class="text-[11px] opacity-80 font-bold">${h.sub_label || ''}</p>
+                        </div>
+                    </div>
+                    <div class="text-right relative z-10">
+                        <p class="text-[18px] font-black tracking-tight mb-1 font-mono">${h.phone}</p>
+                        <button onclick="${typeof callPhone === 'function' ? `callPhone('${h.phone}')` : `window.location.href='tel:${h.phone}'`}" class="bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/30">Gọi ngay</button>
+                    </div>
+                    <div class="absolute right-[-10%] top-[-20%] w-32 h-32 bg-white/10 rounded-full group-hover:scale-125 transition-transform duration-700"></div>
+                </div>
+            `).join('')}
+        </div>
+        <div class="mt-6 bg-red-50 border border-red-100 p-4 rounded-2xl flex items-center justify-center space-x-3">
+            <span class="text-red-500 text-lg">⚠️</span>
+            <span class="text-[11px] font-black text-red-700 uppercase tracking-tighter">Chỉ sử dụng cho các trường hợp khẩn cấp thực sự</span>
+        </div>
+    `;
+    return container;
+}
+
+/**
+ * 6. LATEST NEWS
+ */
+export function renderLatestNews(node, globalConfig = {}, dataSources = {}) {
+    const container = document.createElement('div');
+    container.className = 'mt-12 px-4';
+
+    const title = node?.title || node?.content?.title || 'Thông tin mới nhất';
+    const dataSourceKey = node?.data_source?.key || node?.content?.data_source?.key || 'news_api';
+    const params = node?.data_source?.params || node?.content?.data_source?.params || {};
+
+    container.innerHTML = `
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-1 h-6 bg-blue-600 rounded-full"></div>
+                <h3 class="text-[18px] font-black text-gray-800 uppercase tracking-tight">${title}</h3>
+            </div>
+            <span class="text-[11px] font-black text-blue-600 uppercase cursor-pointer hover:underline" data-route="news">Xem tất cả</span>
+        </div>
+        <div id="latest-news-list" class="space-y-4">
+            <div class="text-center py-6"><div class="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div></div>
+        </div>
+    `;
+
+    // Hook 'Xem tất cả' vào Router
+    const viewAllBtn = container.querySelector('[data-route="news"]');
+    if (viewAllBtn) {
+        viewAllBtn.addEventListener('click', () => {
+            const navNews = document.querySelector('.nav-item[data-route="news"]');
+            if (navNews) navNews.click();
+        });
+    }
+
+    // Resolve API URL
+    const dataSource = dataSources && dataSources[dataSourceKey];
+    let apiEndpoint = '';
+    if (dataSource && dataSource.api) {
+        const apiPath = dataSource.api;
+        if (apiPath.startsWith('http://') || apiPath.startsWith('https://')) {
+            apiEndpoint = apiPath;
+        } else if (apiPath.startsWith('/wp-json')) {
+            const origin = config.API_BASE_URL.split('/wp-json')[0];
+            apiEndpoint = `${origin}${apiPath}`;
+        } else {
+            const separator = apiPath.startsWith('/') ? '' : '/';
+            apiEndpoint = `${config.API_BASE_URL}${separator}${apiPath}`;
+        }
+    } else {
+        apiEndpoint = `${config.API_BASE_URL}/miniapp/v1/news`;
+    }
+
+    const finalParams = { limit: 3, ...params };
+    let fetchUrl = apiEndpoint;
+    const queryParams = [];
+    for (const [k, v] of Object.entries(finalParams)) {
+        queryParams.push(`${encodeURIComponent(k)}=${encodeURIComponent(v)}`);
+    }
+    if (queryParams.length > 0) {
+        const separator = fetchUrl.includes('?') ? '&' : '?';
+        fetchUrl += separator + queryParams.join('&');
+    }
+
+    // Fetch dynamic content
+    (async () => {
+        const listDiv = container.querySelector('#latest-news-list');
+        if (!listDiv) return;
+        try {
+            const res = await fetch(fetchUrl);
+            if (!res.ok) throw new Error('API Error');
+            const result = await res.json();
+            const items = result.data || [];
+
+            if (!listDiv.isConnected) return; // Prevent memory leak / write to detached DOM
+
+            if (items.length > 0) {
+                listDiv.innerHTML = items.map(item => {
+                    const imgHtml = item.image_url 
+                        ? `<img src="${item.image_url}" class="w-16 h-16 object-cover rounded-xl shadow-md" />`
+                        : `<div class="w-16 h-16 bg-blue-50 rounded-xl flex items-center justify-center text-2xl">📰</div>`;
+
+                    return `
+                        <div class="latest-news-item bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex space-x-4 cursor-pointer active:scale-98 transition-transform duration-200" data-id="${item.id}">
+                            <div class="flex-1 flex flex-col justify-between">
+                                <h4 class="text-xs font-bold text-gray-800 line-clamp-2 leading-snug mb-1">${item.title}</h4>
+                                <span class="text-[9px] font-black text-blue-600 uppercase tracking-widest mt-1">${item.date}</span>
+                            </div>
+                            ${imgHtml}
+                        </div>
+                    `;
+                }).join('');
+
+                listDiv.querySelectorAll('.latest-news-item').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const newsId = el.dataset.id;
+                        window.dispatchEvent(new CustomEvent('miniapp:navigate', { detail: { route: `news-detail:${newsId}` } }));
+                    });
+                });
+            } else {
+                listDiv.innerHTML = `
+                    <div class="bg-white rounded-[32px] p-6 border border-gray-100 shadow-xl flex flex-col items-center text-center">
+                        <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-3xl mb-4">📰</div>
+                        <p class="text-[13px] font-bold text-gray-600 italic">Chưa có bài viết mới nào được cập nhật.</p>
+                    </div>
+                `;
+            }
+        } catch (err) {
+            console.error('Fetch latest news error:', err);
+            if (listDiv.isConnected) {
+                listDiv.innerHTML = '<p class="text-center text-red-500 text-[11px] py-4">Không thể tải tin tức.</p>';
+            }
+        }
+    })();
 
     return container;
 }
 
 /**
  * 7. BOTTOM NAVIGATION
- * Ghi chú: Bottom Nav nên được giữ code tĩnh vì đây là điều hướng cốt lõi của App.
  */
-export function renderBottomNav() {
+export function renderBottomNav(globalConfig) {
     const nav = document.createElement('div');
-    nav.className = 'fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white/90 backdrop-blur-xl border-t border-gray-100 px-8 py-4 flex justify-between items-center z-50 rounded-t-3xl shadow-2xl';
+    nav.className = 'fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white/95 backdrop-blur-2xl border-t border-gray-100 px-8 py-5 flex justify-between items-center z-[100] rounded-t-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.08)]';
 
+    // [FIX 1]: Đổi id thành data-route để tương thích Router main.js
     const items = [
-        { label: 'Trang chủ', icon: '🏠', active: true },
-        { label: 'Phản ánh', icon: '📝' },
-        { label: 'Tin tức', icon: '📰' },
-        { label: 'Liên hệ', icon: '📞' }
+        { route: 'home', label: 'Trang chủ', icon: '🏠', active: true },
+        { route: 'faq', label: 'Hỏi đáp', icon: '💬' },
+        { route: 'report', label: 'Phản ánh', icon: '📝' },
+        { route: 'news', label: 'Tin tức', icon: '📰' },
+        { route: 'contact', label: 'Liên hệ', icon: '📞' }
     ];
 
     nav.innerHTML = items.map(item => `
-        <div class="flex flex-col items-center cursor-pointer group active:scale-90 transition">
-            <span class="text-2xl ${item.active ? 'text-[#00BFFF] drop-shadow-sm' : 'text-gray-300'}">${item.icon}</span>
-            <span class="text-[10px] font-black mt-1.5 ${item.active ? 'text-[#00BFFF]' : 'text-gray-400'}">${item.label}</span>
+        <div data-route="${item.route}" class="nav-item flex flex-col items-center group cursor-pointer active:scale-90 transition-all">
+            <span class="text-[26px] mb-1.5 transition-transform group-hover:-translate-y-1 ${item.active ? 'text-blue-600 drop-shadow-sm' : 'text-gray-300'}">${item.icon}</span>
+            <span class="text-[10px] font-black uppercase tracking-widest ${item.active ? 'text-blue-600' : 'text-gray-400'}">${item.label}</span>
+            ${item.active ? '<div class="active-dot w-1 h-1 bg-blue-600 rounded-full mt-1 animate-pulse"></div>' : ''}
         </div>
     `).join('');
 

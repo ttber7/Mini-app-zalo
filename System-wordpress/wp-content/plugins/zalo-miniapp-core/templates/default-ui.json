@@ -1,0 +1,204 @@
+{
+  "miniapp_name": "Công an Xã Cần Đước",
+  "miniapp_logo": "",
+  "miniapp_primary_color": "#0068ff",
+  "miniapp_entry_page": "home",
+  "station_address": "12 Đường Quốc Lộ 50, Thị trấn Cần Đước, Huyện Cần Đước, Long An",
+  "station_phone": "0272.3881.213",
+  "station_map_url": "https://maps.google.com/?q=Cong+an+huyen+Can+Duoc+Long+An",
+  "miniapp_pages": [
+    {
+      "page_id": "home",
+      "page_title": "Trang chủ",
+      "visible_for": [
+        "citizen"
+      ],
+      "page_components": [
+        {
+          "id": "stats_01",
+          "_type": "statistics_grid",
+          "visible_for": [
+            "citizen"
+          ],
+          "population": "13.364",
+          "households": "3.560",
+          "area": "5.75",
+          "party_members": "320",
+          "update_time": "Tháng 5/2026"
+        },
+        {
+          "id": "menu_01",
+          "_type": "grid_menu",
+          "visible_for": [
+            "citizen"
+          ],
+          "items": [
+            {
+              "icon": "📅",
+              "label": "Đăng ký lịch làm việc",
+              "action_type": "navigate",
+              "action_value": "schedule",
+              "_type": "_"
+            },
+            {
+              "icon": "👥",
+              "label": "Đăng ký lịch với CSKV",
+              "action_type": "navigate",
+              "action_value": "schedule_cskv",
+              "_type": "_"
+            },
+            {
+              "icon": "⚠️",
+              "label": "Tin tức an ninh",
+              "action_type": "navigate",
+              "action_value": "news",
+              "_type": "_"
+            },
+            {
+              "icon": "📄",
+              "label": "VB hành chính mới ban hành",
+              "action_type": "open_url",
+              "action_value": "https://dichvucong.gov.vn",
+              "_type": "_"
+            },
+            {
+              "icon": "🚨",
+              "label": "Phản ánh",
+              "action_type": "navigate",
+              "action_value": "report",
+              "_type": "_"
+            },
+            {
+              "icon": "👮",
+              "label": "Tổ công tác",
+              "action_type": "navigate",
+              "action_value": "officer",
+              "_type": "_"
+            },
+            {
+              "icon": "✈️",
+              "label": "Văn hóa – Xã hội – Du lịch",
+              "action_type": "open_url",
+              "action_value": "https://dulichlongan.gov.vn",
+              "_type": "_"
+            },
+            {
+              "icon": "👨‍👩‍👧‍👦",
+              "label": "Dân cư – Đời sống",
+              "action_type": "open_url",
+              "action_value": "https://longan.gov.vn",
+              "_type": "_"
+            },
+            {
+              "icon": "⚖️",
+              "label": "Thư viện pháp luật",
+              "action_type": "open_url",
+              "action_value": "https://thuvienphapluat.vn",
+              "_type": "_"
+            },
+            {
+              "icon": "📂",
+              "label": "Cổng dịch vụ công trực tuyến",
+              "action_type": "open_url",
+              "action_value": "https://dichvucong.longan.gov.vn",
+              "_type": "_"
+            },
+            {
+              "icon": "🏛️",
+              "label": "Cổng thông tin tỉnh Long An",
+              "action_type": "open_url",
+              "action_value": "https://longan.gov.vn",
+              "_type": "_"
+            },
+            {
+              "icon": "🌟",
+              "label": "Bộ Công an",
+              "action_type": "open_url",
+              "action_value": "https://mps.gov.vn",
+              "_type": "_"
+            },
+            {
+              "icon": "🎬",
+              "label": "Video tuyên truyền",
+              "action_type": "open_url",
+              "action_value": "https://youtube.com",
+              "_type": "_"
+            },
+            {
+              "icon": "📊",
+              "label": "Đánh giá sự hài lòng",
+              "action_type": "open_url",
+              "action_value": "https://dichvucong.gov.vn",
+              "_type": "_"
+            }
+          ]
+        },
+        {
+          "id": "oa_01",
+          "_type": "official_channel",
+          "visible_for": [
+            "citizen"
+          ],
+          "oa_id": "502931508216399126",
+          "cover_image": ""
+        },
+        {
+          "id": "news_01",
+          "_type": "article_list",
+          "visible_for": [
+            "citizen"
+          ],
+          "title": "Thông tin mới nhất",
+          "data_source_key": "news_api"
+        },
+        {
+          "id": "emergency_01",
+          "_type": "emergency_list",
+          "visible_for": [
+            "citizen"
+          ],
+          "hotlines": [
+            {
+              "label": "Công an Xã Cần Đước",
+              "sub_label": "Hotline Trực ban 24/7",
+              "phone": "0272.3881.213",
+              "bg_color": "#1e3a8a",
+              "_type": "_"
+            },
+            {
+              "label": "PCCC",
+              "sub_label": "Chữa cháy & cứu nạn",
+              "phone": "114",
+              "bg_color": "#dc2626",
+              "_type": "_"
+            },
+            {
+              "label": "Cấp cứu",
+              "sub_label": "Y tế khẩn cấp",
+              "phone": "115",
+              "bg_color": "#10b981",
+              "_type": "_"
+            },
+            {
+              "label": "Điện lực",
+              "sub_label": "Sự cố điện",
+              "phone": "1900.1006",
+              "bg_color": "#d97706",
+              "_type": "_"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "zalo_oa_config": [
+    {
+      "app_id": "",
+      "secret_key": "",
+      "oa_id": "502931508216399126",
+      "access_token": "",
+      "refresh_token": "",
+      "_type": "zalo_oa_config"
+    }
+  ]
+}
