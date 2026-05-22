@@ -24,8 +24,3 @@ Thumbs.db
 notebooklm-mcp-cli/
 md/
 scratch/
-
-# Build artifacts & backups
-zalo-miniapp-core.zip
-backup_before_sync.zip
-
