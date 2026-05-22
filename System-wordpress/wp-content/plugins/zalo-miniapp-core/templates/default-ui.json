@@ -189,6 +189,52 @@
           ]
         }
       ]
+    },
+    {
+      "page_id": "contact",
+      "page_title": "Liên hệ & Hotline",
+      "visible_for": [
+        "citizen"
+      ],
+      "page_components": [
+        {
+          "id": "contact_emergency",
+          "_type": "emergency_list",
+          "visible_for": [
+            "citizen"
+          ],
+          "hotlines": [
+            {
+              "label": "Trực ban Công an",
+              "sub_label": "Trực ban Công an",
+              "phone": "0272.3881.213",
+              "bg_color": "#ef4444",
+              "_type": "_"
+            },
+            {
+              "label": "Cảnh sát 113",
+              "sub_label": "Cảnh sát 113",
+              "phone": "113",
+              "bg_color": "#2563eb",
+              "_type": "_"
+            },
+            {
+              "label": "Cứu hỏa 114",
+              "sub_label": "Cứu hóa 114",
+              "phone": "114",
+              "bg_color": "#f97316",
+              "_type": "_"
+            },
+            {
+              "label": "Cấp cứu 115",
+              "sub_label": "Cấp cứu 115",
+              "phone": "115",
+              "bg_color": "#10b981",
+              "_type": "_"
+            }
+          ]
+        }
+      ]
     }
   ],
   "zalo_oa_config": [

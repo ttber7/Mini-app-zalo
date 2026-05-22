@@ -9,16 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0B0F19;
-            --card-bg: rgba(22, 28, 45, 0.7);
-            --primary: #2D58D7;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --primary: #1E3A8A;
             --primary-hover: #1E40AF;
-            --accent: #E11D48;
-            --gold: #F59E0B;
-            --text-light: #F8FAFC;
-            --text-muted: #94A3B8;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --glow: 0 0 30px rgba(45, 88, 215, 0.25);
+            --accent: #DC2626;
+            --gold: #D97706;
+            --text-light: #0F172A;
+            --text-muted: #475569;
+            --border-color: rgba(15, 23, 42, 0.08);
+            --glow: 0 10px 30px rgba(30, 58, 138, 0.06);
         }
 
         * {
@@ -30,10 +30,10 @@
         body {
             background-color: var(--bg-color);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(45, 88, 215, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(225, 29, 72, 0.1) 0%, transparent 40%),
-                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+                radial-gradient(circle at 10% 20%, rgba(30, 58, 138, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(220, 38, 38, 0.02) 0%, transparent 40%),
+                linear-gradient(rgba(15, 23, 42, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 23, 42, 0.015) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
             color: var(--text-light);
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -60,18 +60,18 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.3));
+            filter: drop-shadow(0 4px 12px rgba(30, 58, 138, 0.15));
             animation: pulse-glow 3s infinite alternate;
         }
 
         @keyframes pulse-glow {
             0% {
                 transform: scale(1);
-                filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.2));
+                filter: drop-shadow(0 4px 12px rgba(30, 58, 138, 0.15));
             }
             100% {
                 transform: scale(1.03);
-                filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.45));
+                filter: drop-shadow(0 6px 18px rgba(30, 58, 138, 0.25));
             }
         }
 
@@ -80,32 +80,31 @@
             font-weight: 800;
             letter-spacing: 0.5px;
             text-transform: uppercase;
-            color: var(--text-light);
+            color: var(--primary);
             margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-            background: linear-gradient(135deg, #FFF 60%, #E2E8F0 100%);
+            background: linear-gradient(135deg, #1E3A8A 60%, #1D4ED8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .subtitle {
             font-size: 1.1rem;
-            color: var(--gold);
-            font-weight: 600;
-            letter-spacing: 1px;
+            color: var(--accent);
+            font-weight: 700;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
             margin-bottom: 6px;
         }
 
         .location-badge {
             display: inline-block;
-            background: rgba(45, 88, 215, 0.15);
-            border: 1px solid rgba(45, 88, 215, 0.3);
-            color: #60A5FA;
+            background: rgba(30, 58, 138, 0.06);
+            border: 1px solid rgba(30, 58, 138, 0.15);
+            color: #1E3A8A;
             padding: 4px 14px;
             border-radius: 20px;
             font-size: 0.85rem;
-            font-weight: 500;
+            font-weight: 600;
             margin-top: 5px;
         }
 
@@ -129,12 +128,10 @@
 
         .portal-card {
             background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-color);
             border-radius: 24px;
             padding: 40px 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
@@ -143,13 +140,13 @@
 
         .portal-card:hover {
             transform: translateY(-5px);
-            border-color: rgba(45, 88, 215, 0.4);
-            box-shadow: var(--glow), 0 15px 35px rgba(0, 0, 0, 0.4);
+            border-color: rgba(30, 58, 138, 0.2);
+            box-shadow: 0 20px 40px rgba(30, 58, 138, 0.08);
         }
 
         .portal-card.citizen-card:hover {
-            border-color: rgba(245, 158, 11, 0.3);
-            box-shadow: 0 0 30px rgba(245, 158, 11, 0.15), 0 15px 35px rgba(0, 0, 0, 0.4);
+            border-color: rgba(217, 119, 6, 0.2);
+            box-shadow: 0 20px 40px rgba(217, 119, 6, 0.08);
         }
 
         .card-header {
@@ -168,15 +165,15 @@
         }
 
         .citizen-badge {
-            background: rgba(245, 158, 11, 0.12);
+            background: rgba(217, 119, 6, 0.08);
             color: var(--gold);
-            border: 1px solid rgba(245, 158, 11, 0.25);
+            border: 1px solid rgba(217, 119, 6, 0.2);
         }
 
         .officer-badge {
-            background: rgba(45, 88, 215, 0.15);
-            color: #60A5FA;
-            border: 1px solid rgba(45, 88, 215, 0.35);
+            background: rgba(30, 58, 138, 0.06);
+            color: #1D4ED8;
+            border: 1px solid rgba(30, 58, 138, 0.15);
         }
 
         h2 {
@@ -194,8 +191,8 @@
 
         /* Citizen section features */
         .qr-section {
-            background: rgba(11, 15, 25, 0.5);
-            border: 1px dashed var(--border-color);
+            background: #F8FAFC;
+            border: 1px dashed rgba(15, 23, 42, 0.12);
             border-radius: 16px;
             padding: 20px;
             margin: 25px 0;
@@ -216,6 +213,7 @@
             flex-shrink: 0;
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(15, 23, 42, 0.06);
         }
 
         .qr-placeholder img {
@@ -270,7 +268,7 @@
 
         .steps-list li::before {
             content: "•";
-            color: var(--gold);
+            color: var(--accent);
             font-size: 1.2rem;
             position: absolute;
             left: 5px;
@@ -279,8 +277,8 @@
 
         /* Officer section elements */
         .officer-illustration {
-            background: linear-gradient(135deg, rgba(30, 64, 175, 0.2) 0%, rgba(225, 29, 72, 0.05) 100%);
-            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.04) 0%, rgba(220, 38, 38, 0.02) 100%);
+            border: 1px solid rgba(30, 58, 138, 0.08);
             border-radius: 16px;
             padding: 20px;
             margin: 25px 0;
@@ -294,7 +292,7 @@
             align-items: center;
             justify-content: space-between;
             font-size: 0.85rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(15, 23, 42, 0.04);
             padding-bottom: 8px;
         }
 
@@ -313,8 +311,8 @@
         }
 
         .badge-live {
-            background: rgba(16, 185, 129, 0.15);
-            color: #34D399;
+            background: rgba(16, 185, 129, 0.12);
+            color: #059669;
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 0.75rem;
@@ -346,29 +344,29 @@
         .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
             color: #fff;
-            box-shadow: 0 4px 12px rgba(45, 88, 215, 0.3);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(45, 88, 215, 0.45);
+            box-shadow: 0 6px 20px rgba(30, 58, 138, 0.25);
         }
 
         .btn-outline {
             background: transparent;
-            border: 1px solid rgba(245, 158, 11, 0.4);
+            border: 1px solid rgba(217, 119, 6, 0.4);
             color: var(--gold);
         }
 
         .btn-outline:hover {
-            background: rgba(245, 158, 11, 0.08);
+            background: rgba(217, 119, 6, 0.05);
             border-color: var(--gold);
             transform: translateY(-2px);
         }
 
         footer {
             border-top: 1px solid var(--border-color);
-            background: rgba(11, 15, 25, 0.8);
+            background: #F1F5F9;
             padding: 30px 20px;
             text-align: center;
         }
@@ -436,7 +434,7 @@
                     <div class="qr-placeholder">
                         <div class="qr-scan-line"></div>
                         <!-- Sử dụng QR Code mẫu chuyên nghiệp -->
-                        <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; fill: #0B0F19;">
+                        <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; fill: #0F172A;">
                             <rect x="0" y="0" width="25" height="25" />
                             <rect x="5" y="5" width="15" height="15" fill="#fff" />
                             <rect x="9" y="9" width="7" height="7" />

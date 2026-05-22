@@ -172,8 +172,8 @@ class Zalo_MiniApp_Core
             return;
         }
 
-        // 2. Giáp bảo vệ kép: Kiểm tra cờ seeding phiên bản 4
-        $is_seeded = get_option('zalo_miniapp_cf_seeded_v4');
+        // 2. Giáp bảo vệ kép: Kiểm tra cờ seeding phiên bản 5
+        $is_seeded = get_option('zalo_miniapp_cf_seeded_v5');
 
         if (!$is_seeded) {
             $template_file = ZALO_MINIAPP_CORE_PATH . 'templates/default-ui.json';
@@ -203,7 +203,7 @@ class Zalo_MiniApp_Core
                     carbon_set_theme_option('zalo_oa_config', $data['zalo_oa_config'] ?? []);
 
                     // Đánh dấu đã mồi thành công
-                    update_option('zalo_miniapp_cf_seeded_v4', 1);
+                    update_option('zalo_miniapp_cf_seeded_v5', 1);
 
                     // 4. Giải phóng cache tránh dữ liệu cũ trong bộ nhớ đệm
                     wp_cache_flush();
