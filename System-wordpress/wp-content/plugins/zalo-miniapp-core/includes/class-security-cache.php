@@ -32,11 +32,12 @@ class Zalo_MiniApp_Security_Cache
         }
 
         $pages = get_option('_miniapp_pages');
-        if (empty($pages)) {
+        if (empty($pages) || !is_array($pages)) {
             $pages = carbon_get_theme_option('miniapp_pages');
         }
-        if (empty($pages))
+        if (empty($pages) || !is_array($pages)) {
             return;
+        }
 
         $page_ids = [];
 
@@ -89,7 +90,7 @@ class Zalo_MiniApp_Security_Cache
         $base_api_url = '/wp-json/miniapp/v1';
 
         $oa_config = get_option('_zalo_oa_config');
-        if (empty($oa_config)) {
+        if (empty($oa_config) || !is_array($oa_config)) {
             $oa_config = carbon_get_theme_option('zalo_oa_config');
         }
         $oa_id = '';

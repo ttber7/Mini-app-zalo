@@ -64,13 +64,19 @@ class Zalo_MiniApp_CPT_Registry
             check_admin_referer('zalo_miniapp_export_action', 'zalo_miniapp_export_nonce');
 
             $config_data = array(
-                'miniapp_name'          => get_option('_miniapp_name'),
-                'miniapp_logo'          => get_option('_miniapp_logo'),
-                'miniapp_primary_color' => get_option('_miniapp_primary_color'),
-                'miniapp_version'       => get_option('_miniapp_version'),
-                'miniapp_entry_page'    => get_option('_miniapp_entry_page'),
-                'miniapp_pages'         => get_option('_miniapp_pages'),
-                'zalo_oa_config'        => get_option('_zalo_oa_config'),
+                'miniapp_name'             => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('miniapp_name') : get_option('_miniapp_name'),
+                'miniapp_logo'             => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('miniapp_logo') : get_option('_miniapp_logo'),
+                'miniapp_primary_color'    => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('miniapp_primary_color') : get_option('_miniapp_primary_color'),
+                'miniapp_version'          => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('miniapp_version') : get_option('_miniapp_version'),
+                'miniapp_entry_page'       => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('miniapp_entry_page') : get_option('_miniapp_entry_page'),
+                'station_address'          => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('station_address') : get_option('_station_address'),
+                'station_phone'            => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('station_phone') : get_option('_station_phone'),
+                'station_map_url'          => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('station_map_url') : get_option('_station_map_url'),
+                'faq_jaccard_threshold'    => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('faq_jaccard_threshold') : get_option('_faq_jaccard_threshold'),
+                'oa_report_notify_enabled' => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('oa_report_notify_enabled') : get_option('_oa_report_notify_enabled'),
+                'oa_report_template_id'    => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('oa_report_template_id') : get_option('_oa_report_template_id'),
+                'miniapp_pages'            => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('miniapp_pages') : get_option('_miniapp_pages'),
+                'zalo_oa_config'           => function_exists('carbon_get_theme_option') ? carbon_get_theme_option('zalo_oa_config') : get_option('_zalo_oa_config'),
             );
 
             $json_data = wp_json_encode($config_data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
@@ -110,15 +116,57 @@ class Zalo_MiniApp_CPT_Registry
                 exit;
             }
 
-            $keys = ['miniapp_name', 'miniapp_logo', 'miniapp_primary_color', 'miniapp_version', 'miniapp_entry_page', 'miniapp_pages', 'zalo_oa_config'];
-            foreach ($keys as $key) {
-                if (isset($data[$key])) {
-                    update_option('_' . $key, $data[$key]);
+            // Dọn dẹp cơ sở dữ liệu cũ trước khi nạp cấu hình mới tránh xung đột/rác dữ liệu
+            global $wpdb;
+            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_miniapp_pages%' OR option_name LIKE 'miniapp_pages%'");
+            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_zalo_oa_config%' OR option_name LIKE 'zalo_oa_config%'");
+            $wpdb->query($wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name IN (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                '_miniapp_name', '_miniapp_logo', '_miniapp_primary_color', '_miniapp_version', '_miniapp_entry_page',
+                '_station_address', '_station_phone', '_station_map_url', '_faq_jaccard_threshold',
+                '_oa_report_notify_enabled', '_oa_report_template_id'
+            ));
+
+            $keys = [
+                'miniapp_name',
+                'miniapp_logo',
+                'miniapp_primary_color',
+                'miniapp_version',
+                'miniapp_entry_page',
+                'station_address',
+                'station_phone',
+                'station_map_url',
+                'faq_jaccard_threshold',
+                'oa_report_notify_enabled',
+                'oa_report_template_id',
+                'miniapp_pages',
+                'zalo_oa_config'
+            ];
+
+            if (function_exists('carbon_set_theme_option')) {
+                foreach ($keys as $key) {
+                    if (isset($data[$key])) {
+                        carbon_set_theme_option($key, $data[$key]);
+                    }
+                }
+            } else {
+                foreach ($keys as $key) {
+                    if (isset($data[$key])) {
+                        update_option('_' . $key, $data[$key]);
+                    }
                 }
             }
 
-            // Kích hoạt việc sinh lại file JSON tĩnh
-            update_option('zalo_miniapp_need_build', 1);
+            // Đồng bộ bộ nhớ đệm
+            wp_cache_flush();
+
+            // Kích hoạt việc sinh lại file JSON tĩnh ngay lập tức
+            if (class_exists('Zalo_MiniApp_Security_Cache')) {
+                $security = new Zalo_MiniApp_Security_Cache();
+                $security->generate_ui_config_json();
+            } else {
+                update_option('zalo_miniapp_need_build', 1);
+            }
 
             set_transient('zalo_miniapp_import_success', 'Đã nhập cấu hình và tự động lên lịch biên dịch JSON thành công!', 30);
             wp_safe_redirect(admin_url('admin.php?page=zalo-miniapp-import-export'));
